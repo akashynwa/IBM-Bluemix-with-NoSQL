@@ -1,0 +1,117 @@
+<html>
+<head>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+        input, form, label {
+    display: inline;
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1"></div>
+        <h1>
+    Welcome to Cloud File Store System !
+</h1>
+<hr>
+<h2>
+    Upload File
+</h2>
+<p id="uploadstatus"></p>
+<form action="upload" enctype="multipart/form-data" method="post" id="fileupload">
+    <label> Select File </label>
+    <input type="file" name="file" id="fileinput" required  class="btn btn-default">
+    <input type="submit" value="Submit" id="submit" class="btn btn-primary">
+</form>
+<hr>
+<h2>
+    List Of Files
+</h2>
+
+    <table class="table table-striped">
+        <tr>
+            <td> File Name</td>
+            <td> File Version</td>
+            <td> Last Modified </td>
+        </tr>
+
+
+    {% if fileList: %}
+         {% for x in fileList %}
+            <tr>
+                <td>{{x.fileName}}</td>
+                <td>{{x.fileVersion}}</td>
+                <td>{{x.lastModified}}</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </table>
+<hr>
+<h2> Delete File</h2>
+<form action="/deleteFile" method="post">
+    <div class="form-group">
+        <label for="filename">File Name : </label>
+        <input type="text" name="filename" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="fileversion">File Version : </label>
+        <input type="text" name="fileversion" class="form-control">
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Delete" class="btn btn-danger">
+    </div>
+</form>
+<hr>
+<h2> Download File</h2>
+<form action="/downloadFile" method="post">
+    <div class="form-group">
+        <label for="filename">File Name : </label>
+        <input type="text" name="filename" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="fileversion">File Version : </label>
+        <input type="text" name="fileversion" class="form-control">
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Download" class="btn btn-info">
+    </div>
+</form>
+<hr>
+    </div>
+</div>
+</div>
+<script>
+    function deleteFile (fname) {
+       $.get('/deletefile/'+ fname.trim(),function (result){
+           if(result){
+               console.log("File deleted successfully");
+               window.location = "/";
+           }
+           else{
+                $("#uploadstatus").html("File not deleted");
+           }
+       });
+    }
+    $(function() {
+        var x = {{uploadstatus}} ;
+        if(x == '0'){
+            $("#uploadstatus").html("File upload unsuccessful ! Either file size is more than 1mb or your total " +
+            "allocated folder size exceeds 10mb.");
+        } else if (x == '1'){
+            $("#uploadstatus").html("File upload successful");
+        }
+        else {
+            $("#uploadstatus").html("");
+        }
+    });
+</script>
+</body>
+</html>
